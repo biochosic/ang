@@ -3,294 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Площа многокутника | Освітній проект</title>
+    <title>Геометрія: Площа фігур | Освітній простір</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #0a0f1d;
-            --glass: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.3);
-            --text-main: #e2e8f0;
-            --text-dim: #94a3b8;
+            --primary: #3b82f6;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
+            font-family: 'Noto Sans', sans-serif;
             background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
+            color: var(--text);
+            overflow-x: hidden;
         }
 
-        /* Навігація */
-        .hidden { display: none !important; }
-        
-        .menu-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .logo {
-            font-size: clamp(2rem, 10vw, 4rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            margin-bottom: 3rem;
-            background: linear-gradient(to bottom right, #fff, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-        }
-
-        .btn-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            width: 100%;
-            max-width: 1000px;
-        }
-
-        .glass-btn {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px 20px;
-            border-radius: 28px;
-            color: white;
-            font-size: 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .glass-btn:hover {
-            border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
-        }
-
-        .glass-btn i { font-style: normal; font-size: 3rem; }
-
-        /* Слайдер Теорії */
-        .theory-wrapper {
+        /* Scroll Snap Container */
+        .container {
             height: 100vh;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scrollbar-width: none;
         }
-        .theory-wrapper::-webkit-scrollbar { display: none; }
+        .container::-webkit-scrollbar { display: none; }
 
-        .slide {
+        section {
             height: 100vh;
             width: 100%;
+            scroll-snap-align: start;
             display: flex;
             align-items: center;
             justify-content: center;
-            scroll-snap-align: start;
-            padding: 40px 20px;
+            padding: 20px;
+            position: relative;
         }
 
-        .content-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            padding: clamp(2rem, 5vw, 4rem);
-            border-radius: 40px;
+        .card {
+            background: var(--card-bg);
             max-width: 900px;
             width: 100%;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
             opacity: 0;
-            transform: translateY(50px);
-            transition: 0.8s ease-out;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
         }
 
-        .content-card.active { opacity: 1; transform: translateY(0); }
+        section.active .card {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            z-index: 1000;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 15px;
-            cursor: pointer;
+        h1, h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary);
+            margin-bottom: 20px;
             font-weight: 700;
-            backdrop-filter: blur(10px);
+        }
+
+        h1 { font-size: clamp(2rem, 5vw, 3.5rem); text-align: center; }
+        h2 { font-size: 2.2rem; border-left: 5px solid var(--accent); padding-left: 15px; }
+
+        p { font-size: 1.2rem; line-height: 1.7; margin-bottom: 20px; color: var(--text); }
+
+        .highlight-box {
+            background: #eff6ff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            margin: 20px 0;
+        }
+
+        /* Списки властивостей */
+        .props-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .prop-item {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
             transition: 0.3s;
         }
-        .back-btn:hover { background: var(--accent); color: var(--bg); }
+        .prop-item:hover { background: #e2e8f0; }
+        .prop-item b { display: block; color: var(--primary); margin-bottom: 5px; }
 
-        /* Текстові стилі */
-        h2 { font-size: 2.5rem; color: var(--accent); margin-bottom: 1.5rem; line-height: 1.1; }
-        .highlight { color: var(--accent); font-weight: 800; }
-        
-        ul { list-style: none; margin: 20px 0; }
-        li { margin-bottom: 15px; font-size: 1.2rem; line-height: 1.5; padding-left: 20px; border-left: 3px solid var(--border); }
-        li b { color: var(--accent); margin-right: 8px; }
-
-        .formula-box {
-            background: rgba(255,255,255,0.05);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            font-size: 2rem;
-            margin: 20px 0;
-            border: 1px dashed var(--accent);
+        /* Візуалізація фігур */
+        .shapes-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .info-tag { background: var(--accent-glow); padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 10px; display: inline-block; }
+        .shape-box {
+            text-align: center;
+        }
 
-        @media (max-width: 768px) {
-            h2 { font-size: 1.8rem; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .glass-btn { padding: 25px; }
-            .back-btn { top: 15px; left: 15px; padding: 10px 15px; }
+        .rect {
+            width: 160px;
+            height: 100px;
+            border: 3px solid var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+            margin: 0 auto 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .square {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+            margin: 0 auto 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .label-a { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; }
+        .label-b { position: absolute; left: -25px; top: 50%; transform: translateY(-50%); font-weight: bold; }
+
+        /* Одиниці вимірювання */
+        .unit-badge {
+            display: inline-block;
+            background: var(--text);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            margin: 5px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .land-measure {
+            background: #ecfdf5;
+            border: 2px dashed #10b981;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .math-text { font-size: 1.5rem; color: var(--primary); margin: 15px 0; }
+
+        @media (max-width: 600px) {
+            .card { padding: 25px; border-radius: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+            h2 { font-size: 1.6rem; }
+            .shapes-container { gap: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="home" class="menu-container">
-        <h1 class="logo">Площа<br>Многокутника</h1>
-        <div class="btn-grid">
-            <button class="glass-btn" onclick="nav('theory')"><i>📖</i>Теорія</button>
-            <button class="glass-btn" onclick="nav('tasks')"><i>✏️</i>Завдання</button>
-            <button class="glass-btn" onclick="nav('tests')"><i>🏆</i>Тести</button>
-        </div>
-    </div>
-
-    <div id="theory" class="theory-wrapper hidden">
-        <button class="back-btn" onclick="nav('home')">← МЕНЮ</button>
-
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 1</span>
-                <h2>Поняття площі та її властивості</h2>
-                <p><span class="highlight">Площа</span> — це додатна величина, яка характеризує розмір частини площини, яку займає многокутник.</p>
-                <ul>
-                    <li><b>1. Додатність:</b> Площа будь-якого многокутника завжди більша за нуль.</li>
-                    <li><b>2. Рівність:</b> Якщо два многокутники рівні, то їхні площі також рівні.</li>
-                    <li><b>3. Аддитивність:</b> Площа всієї фігури дорівнює сумі площ усіх її частин при розрізанні.</li>
-                    <li><b>4. Одиниця вимірювання:</b> Ми використовуємо "одиничний квадрат" (1 мм, 1 см, 1 м).</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 2</span>
-                <h2>Одиниці вимірювання</h2>
-                <div class="grid-2">
-                    <ul>
-                        <li>1 см² = 100 мм²</li>
-                        <li>1 дм² = 100 см²</li>
-                        <li>1 м² = 100 дм²</li>
-                    </ul>
-                    <ul>
-                        <li><span class="highlight">1 ар (сотка)</span> = 100 м²</li>
-                        <li><span class="highlight">1 га (гектар)</span> = 10 000 м²</li>
-                        <li>1 км² = 1 000 000 м²</li>
-                    </ul>
+    <div class="container">
+        
+        <section class="active">
+            <div class="card">
+                <h1>Геометрія: Площа</h1>
+                <h2>Що таке площа?</h2>
+                <p><b>Площа</b> — це величина, яка показує, скільки місця займає фігура на площині.</p>
+                <div class="highlight-box">
+                    💡 <b>Уяви:</b> Площа — це кількість фарби, яку треба витратити, щоб зафарбувати стіну, або розмір килима, який повністю закриє підлогу в кімнаті.
+                </div>
+                <div class="props-list">
+                    <div class="prop-item"><b>Додатність</b>Завжди > 0</div>
+                    <div class="prop-item"><b>Рівність</b>Рівні фігури — рівні площі</div>
+                    <div class="prop-item"><b>Додавання</b>Як пазл: ціле = сума частин</div>
+                    <div class="prop-item"><b>Одиниця</b>Одиничний квадрат</div>
                 </div>
             </div>
         </section>
 
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 3</span>
-                <h2>Рівновеликі та рівноскладені</h2>
-                <p><b>Рівновеликі фігури</b> — мають однакову площу, але різну форму.</p>
-                <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 15px 0;">
-                    💡 <i>Запам'ятай: Рівні фігури завжди рівновеликі, але навпаки — не завжди!</i>
+        <section>
+            <div class="card">
+                <h2>Вимірювання та одиниці</h2>
+                <p>Обирай правильний масштаб для вимірювання:</p>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <span class="unit-badge">мм²</span>
+                    <span class="unit-badge">см²</span>
+                    <span class="unit-badge">дм²</span>
+                    <span class="unit-badge">м²</span>
+                    <span class="unit-badge">км²</span>
                 </div>
-                <p><b>Рівноскладені фігури</b> — якщо один многокутник можна розрізати так, щоб із частин скласти інший.</p>
+                <div class="land-measure">
+                    <b>Земельні міри:</b><br>
+                    • <b>Ар (сотка):</b> площа квадрата 10х10 м.<br>
+                    • <b>Гектар (га):</b> площа квадрата 100х100 м (це як 100 соток!).
+                </div>
+                <p style="margin-top: 20px;">
+                    <b>Метод Палетки:</b> для фігур складної форми використовують прозору сітку. 
+                    Рахуємо повні квадрати та додаємо половину неповних.
+                </p>
             </div>
         </section>
 
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 4</span>
-                <h2>Практичне вимірювання (Палетка)</h2>
-                <p>Для фігур неправильної форми використовують прозору плівку з сіткою.</p>
-                <div class="formula-box" style="font-size: 1.5rem;">
-                    S ≈ N + (K / 2)
-                </div>
-                <ul>
-                    <li><b>N</b> — кількість повних квадратів усередині.</li>
-                    <li><b>K</b> — кількість неповних квадратів по контуру.</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 5</span>
+        <section>
+            <div class="card">
                 <h2>Головні формули</h2>
-                <p>Теорема про площу прямокутника:</p>
-                <div class="formula-box">S = a · b</div>
-                <p>Площа квадрата:</p>
-                <div class="formula-box">S = a²</div>
+                <div class="shapes-container">
+                    <div class="shape-box">
+                        <div class="rect"><span class="label-a">a</span><span class="label-b">b</span></div>
+                        <p>Прямокутник</p>
+                        <div class="math-text">$$S = a \cdot b$$</div>
+                    </div>
+                    <div class="shape-box">
+                        <div class="square"><span class="label-a">a</span><span class="label-b">a</span></div>
+                        <p>Квадрат</p>
+                        <div class="math-text">$$S = a^2$$</div>
+                    </div>
+                </div>
+                <div class="highlight-box">
+                    <b>Чому "квадрат"?</b> Другий степінь числа \(x^2\) називають "квадратом" саме тому, що він відповідає площі квадрата зі стороною \(x\).
+                </div>
             </div>
         </section>
 
-        <section class="slide">
-            <div class="content-card">
-                <span class="info-tag">РОЗДІЛ 6</span>
-                <h2>Цікава історія</h2>
-                <p>В Україні XVIII століття використовували складні одиниці:</p>
+        <section>
+            <div class="card">
+                <h2>Цікаві терміни</h2>
+                <p>Чи можуть різні за формою фігури мати однакову площу? Так!</p>
+                <div class="highlight-box">
+                    <b>Рівновеликі фігури</b> — це фігури, площі яких рівні.
+                </div>
+                <p><b>Приклад:</b></p>
                 <ul>
-                    <li>1 кв. аршин = 256 кв. вершків</li>
-                    <li>Це дорівнювало 784 кв. дюймам</li>
+                    <li>Квадрат зі стороною 4 см: \(S = 4 \times 4 = 16 \text{ см}^2\)</li>
+                    <li>Прямокутник 2х8 см: \(S = 2 \times 8 = 16 \text{ см}^2\)</li>
                 </ul>
-                <p>Сьогодні світ перейшов на зручну <span class="highlight">метричну систему</span>.</p>
+                <p style="margin-top: 15px; color: var(--text-light);">Незважаючи на різний вигляд, вони займають однакову кількість місця на площині.</p>
             </div>
         </section>
-    </div>
 
-    <div id="tasks" class="menu-container hidden">
-        <button class="back-btn" onclick="nav('home')">← МЕНЮ</button>
-        <h2 style="text-align:center">Розділ "Завдання" незабаром!</h2>
-    </div>
-    <div id="tests" class="menu-container hidden">
-        <button class="back-btn" onclick="nav('home')">← МЕНЮ</button>
-        <h2 style="text-align:center">Тести готуються до запуску!</h2>
     </div>
 
     <script>
-        function nav(id) {
-            document.querySelectorAll('.menu-container, .theory-wrapper').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById(id);
-            target.classList.remove('hidden');
-            if(id === 'theory') target.scrollTop = 0;
-        }
+        // Скрипт для відстеження активної секції та запуску анімації
+        const sections = document.querySelectorAll('section');
+        const container = document.querySelector('.container');
 
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if(e.isIntersecting) e.target.classList.add('active');
-                else e.target.classList.remove('active');
+        const observerOptions = {
+            threshold: 0.6
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
             });
-        }, { threshold: 0.4 });
+        }, observerOptions);
 
-        document.querySelectorAll('.content-card').forEach(c => obs.observe(c));
+        sections.forEach(section => {
+            observer.observe(section);
+        });
     </script>
 </body>
 </html>
