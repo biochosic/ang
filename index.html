@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Геометрія: Площа фігур | Освітній простір</title>
+    <title>Геометрія: Що таке площа? | Освітній проект</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
-            --primary: #3b82f6;
-            --accent: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --bg-color: #05070a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #00d2ff;
+            --text: #e0e6ed;
         }
 
         * {
@@ -26,10 +25,10 @@
         }
 
         body {
-            font-family: 'Noto Sans', sans-serif;
-            background-color: var(--bg);
+            background-color: var(--bg-color);
             color: var(--text);
-            overflow-x: hidden;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Ховаємо звичайний скрол */
         }
 
         /* Scroll Snap Container */
@@ -37,9 +36,12 @@
             height: 100vh;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
-            scrollbar-width: none;
+            scrollbar-width: none; /* Firefox */
         }
-        .container::-webkit-scrollbar { display: none; }
+
+        .container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
 
         section {
             height: 100vh;
@@ -50,237 +52,204 @@
             justify-content: center;
             padding: 20px;
             position: relative;
+            background: radial-gradient(circle at center, #111827 0%, #05070a 100%);
         }
 
+        /* Glass Card */
         .card {
-            background: var(--card-bg);
-            max-width: 900px;
-            width: 100%;
-            padding: 50px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
             border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        section.active .card {
-            opacity: 1;
-            transform: translateY(0);
+            padding: clamp(20px, 5vw, 60px);
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease;
         }
 
         h1, h2 {
-            font-family: 'Montserrat', sans-serif;
-            color: var(--primary);
+            color: var(--accent);
             margin-bottom: 20px;
-            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        h1 { font-size: clamp(2rem, 5vw, 3.5rem); text-align: center; }
-        h2 { font-size: 2.2rem; border-left: 5px solid var(--accent); padding-left: 15px; }
+        h1 { font-size: clamp(1.8rem, 5vw, 3.5rem); }
+        h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
 
-        p { font-size: 1.2rem; line-height: 1.7; margin-bottom: 20px; color: var(--text); }
+        p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
 
-        .highlight-box {
-            background: #eff6ff;
-            padding: 20px;
+        .illustration {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 20px auto;
             border-radius: 15px;
-            border-left: 5px solid var(--primary);
-            margin: 20px 0;
+            display: block;
+            border: 1px solid var(--glass-border);
         }
 
-        /* Списки властивостей */
-        .props-list {
-            list-style: none;
+        /* Grid for properties */
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-top: 25px;
-        }
-
-        .prop-item {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            transition: 0.3s;
-        }
-        .prop-item:hover { background: #e2e8f0; }
-        .prop-item b { display: block; color: var(--primary); margin-bottom: 5px; }
-
-        /* Візуалізація фігур */
-        .shapes-container {
-            display: flex;
-            gap: 40px;
-            justify-content: center;
             margin-top: 30px;
-            flex-wrap: wrap;
         }
 
-        .shape-box {
-            text-align: center;
-        }
-
-        .rect {
-            width: 160px;
-            height: 100px;
-            border: 3px solid var(--primary);
-            background: rgba(59, 130, 246, 0.1);
-            margin: 0 auto 10px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .square {
-            width: 120px;
-            height: 120px;
-            border: 3px solid var(--accent);
-            background: rgba(245, 158, 11, 0.1);
-            margin: 0 auto 10px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .label-a { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; }
-        .label-b { position: absolute; left: -25px; top: 50%; transform: translateY(-50%); font-weight: bold; }
-
-        /* Одиниці вимірювання */
-        .unit-badge {
-            display: inline-block;
-            background: var(--text);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 8px;
-            margin: 5px;
-            font-family: monospace;
-            font-size: 1.1rem;
-        }
-
-        .land-measure {
-            background: #ecfdf5;
-            border: 2px dashed #10b981;
+        .grid-item {
+            background: rgba(255, 255, 255, 0.03);
             padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
         }
 
-        .math-text { font-size: 1.5rem; color: var(--primary); margin: 15px 0; }
+        .grid-item h3 {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        /* Formula Blocks */
+        .formula-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .formula-card {
+            background: rgba(0, 210, 255, 0.05);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid var(--accent);
+            min-width: 280px;
+        }
+
+        .math-display {
+            font-size: 2rem;
+            margin: 15px 0;
+            color: #fff;
+        }
+
+        /* Units Tag */
+        .unit-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 50px;
+            margin: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
 
         @media (max-width: 600px) {
-            .card { padding: 25px; border-radius: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; }
-            h2 { font-size: 1.6rem; }
-            .shapes-container { gap: 20px; }
+            .card { padding: 30px 15px; border-radius: 20px; }
+            .formula-card { min-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <section class="active">
-            <div class="card">
-                <h1>Геометрія: Площа</h1>
-                <h2>Що таке площа?</h2>
-                <p><b>Площа</b> — це величина, яка показує, скільки місця займає фігура на площині.</p>
-                <div class="highlight-box">
-                    💡 <b>Уяви:</b> Площа — це кількість фарби, яку треба витратити, щоб зафарбувати стіну, або розмір килима, який повністю закриє підлогу в кімнаті.
+<div class="container">
+
+    <section>
+        <div class="card">
+            <h1>Що таке площа?</h1>
+            <img src="https://via.placeholder.com/600x300/111/00d2ff?text=Concept+of+Area" alt="Візуалізація поняття площі: зафарбована поверхня" class="illustration">
+            <p>Площа — це величина, яка показує, скільки місця займає фігура на площині. Уявіть, що ви фарбуєте стіну — кількість фарби і є площа.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>4 властивості площі</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <h3>Додатність</h3>
+                    <p>Площа не буває від'ємною. Не існує фігури з площею -5 м².</p>
                 </div>
-                <div class="props-list">
-                    <div class="prop-item"><b>Додатність</b>Завжди > 0</div>
-                    <div class="prop-item"><b>Рівність</b>Рівні фігури — рівні площі</div>
-                    <div class="prop-item"><b>Додавання</b>Як пазл: ціле = сума частин</div>
-                    <div class="prop-item"><b>Одиниця</b>Одиничний квадрат</div>
+                <div class="grid-item">
+                    <h3>Рівність</h3>
+                    <p>Однакові (рівні) фігури завжди мають однакові площі.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Додавання</h3>
+                    <p>Як пазл: площа цілої фігури дорівнює сумі площ її частин.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Одиниця</h3>
+                    <p>Вимірюється одиничним квадратом (сторона 1 мм, см, м).</p>
                 </div>
             </div>
-        </section>
+            <img src="https://via.placeholder.com/600x200/111/00d2ff?text=Properties+Diagram" alt="Інфографіка властивостей площі" class="illustration">
+        </div>
+    </section>
 
-        <section>
-            <div class="card">
-                <h2>Вимірювання та одиниці</h2>
-                <p>Обирай правильний масштаб для вимірювання:</p>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <span class="unit-badge">мм²</span>
-                    <span class="unit-badge">см²</span>
-                    <span class="unit-badge">дм²</span>
-                    <span class="unit-badge">м²</span>
-                    <span class="unit-badge">км²</span>
-                </div>
-                <div class="land-measure">
-                    <b>Земельні міри:</b><br>
-                    • <b>Ар (сотка):</b> площа квадрата 10х10 м.<br>
-                    • <b>Гектар (га):</b> площа квадрата 100х100 м (це як 100 соток!).
-                </div>
-                <p style="margin-top: 20px;">
-                    <b>Метод Палетки:</b> для фігур складної форми використовують прозору сітку. 
-                    Рахуємо повні квадрати та додаємо половину неповних.
-                </p>
+    <section>
+        <div class="card">
+            <h2>Як вимірювати площу?</h2>
+            <div style="margin-bottom: 30px;">
+                <span class="unit-tag">мм²</span> <span class="unit-tag">см²</span> <span class="unit-tag">м²</span> 
+                <span class="unit-tag">км²</span> <span class="unit-tag">Ар (сотка)</span> <span class="unit-tag">Гектар</span>
             </div>
-        </section>
+            <div class="grid-item" style="text-align: left;">
+                <h3>Метод Палетки</h3>
+                <p>Для вимірювання площі "кривих" або неправильних фігур використовують прозору плівку в клітинку (палетку). Рахують кількість повних клітинок всередині та додають половину неповних клітинок на межі.</p>
+            </div>
+            <img src="https://via.placeholder.com/500x250/111/00d2ff?text=Grid+Method" alt="Метод палетки для вимірювання площі неправильної фігури" class="illustration">
+        </div>
+    </section>
 
-        <section>
-            <div class="card">
-                <h2>Головні формули</h2>
-                <div class="shapes-container">
-                    <div class="shape-box">
-                        <div class="rect"><span class="label-a">a</span><span class="label-b">b</span></div>
-                        <p>Прямокутник</p>
-                        <div class="math-text">$$S = a \cdot b$$</div>
+    <section>
+        <div class="card">
+            <h2>Головні формули</h2>
+            <div class="formula-container">
+                <div class="formula-card">
+                    <h3>Прямокутник</h3>
+                    <div class="math-display">
+                        $S = a \cdot b$
                     </div>
-                    <div class="shape-box">
-                        <div class="square"><span class="label-a">a</span><span class="label-b">a</span></div>
-                        <p>Квадрат</p>
-                        <div class="math-text">$$S = a^2$$</div>
+                    <p>Добуток сусідніх сторін.</p>
+                </div>
+                <div class="formula-card">
+                    <h3>Квадрат</h3>
+                    <div class="math-display">
+                        $S = a^2$
                     </div>
-                </div>
-                <div class="highlight-box">
-                    <b>Чому "квадрат"?</b> Другий степінь числа \(x^2\) називають "квадратом" саме тому, що він відповідає площі квадрата зі стороною \(x\).
+                    <p>Квадрат сторони. Саме тому другий степінь числа в алгебрі називають "квадратом".</p>
                 </div>
             </div>
-        </section>
+            <img src="https://via.placeholder.com/500x200/111/00d2ff?text=Rectangle+and+Square" alt="Схематичне зображення прямокутника та квадрата зі сторонами" class="illustration">
+        </div>
+    </section>
 
-        <section>
-            <div class="card">
-                <h2>Цікаві терміни</h2>
-                <p>Чи можуть різні за формою фігури мати однакову площу? Так!</p>
-                <div class="highlight-box">
-                    <b>Рівновеликі фігури</b> — це фігури, площі яких рівні.
+    <section>
+        <div class="card">
+            <h2>Цікавий факт</h2>
+            <div class="highlight-box" style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px;">
+                <h3>"Рівновеликі фігури"</h3>
+                <p>Це фігури, які мають <b>однакову площу</b>, але зовсім <b>різну форму</b>.</p>
+                <div class="math-display" style="font-size: 1.2rem; color: var(--accent);">
+                    Квадрат $4 \times 4 = 16$ см² <br> Прямокутник $2 \times 8 = 16$ см²
                 </div>
-                <p><b>Приклад:</b></p>
-                <ul>
-                    <li>Квадрат зі стороною 4 см: \(S = 4 \times 4 = 16 \text{ см}^2\)</li>
-                    <li>Прямокутник 2х8 см: \(S = 2 \times 8 = 16 \text{ см}^2\)</li>
-                </ul>
-                <p style="margin-top: 15px; color: var(--text-light);">Незважаючи на різний вигляд, вони займають однакову кількість місця на площині.</p>
+                <p>Вони виглядають інакше, але займають однакову кількість місця на площині!</p>
             </div>
-        </section>
+            <img src="https://via.placeholder.com/600x200/111/00d2ff?text=Equal+Area+Shapes" alt="Порівняння рівновеликих фігур: квадрата та прямокутника" class="illustration">
+        </div>
+    </section>
 
-    </div>
+</div>
 
-    <script>
-        // Скрипт для відстеження активної секції та запуску анімації
-        const sections = document.querySelectorAll('section');
-        const container = document.querySelector('.container');
-
-        const observerOptions = {
-            threshold: 0.6
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, observerOptions);
-
-        sections.forEach(section => {
-            observer.observe(section);
-        });
-    </script>
 </body>
 </html>
