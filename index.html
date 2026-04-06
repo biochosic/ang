@@ -1,268 +1,368 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Геометрія та Шкіра | Мультитул</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root {
-            --bg: #0f172a;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-geo: #38bdf8;
-            --accent-skin: #fb7185;
-            --text: #f1f5f9;
-        }
+<title>Геометрія: Площа фігур</title>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<!-- MathJax (LaTeX) -->
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: radial-gradient(circle at top left, #1e293b, #0f172a);
-            color: var(--text);
-            height: 100vh;
-            overflow: hidden;
-        }
+<style>
 
-        /* --- ГОЛОВНЕ МЕНЮ --- */
-        #main-menu {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.5s ease-in-out;
-        }
+/* ===== GLOBAL ===== */
 
-        .logo {
-            font-size: clamp(1.5rem, 5vw, 3rem);
-            margin-bottom: 3rem;
-            text-align: center;
-            background: linear-gradient(to right, var(--accent-geo), var(--accent-skin));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            width: 90%;
-            max-width: 1000px;
-        }
+body{
+background:#0f172a;
+color:white;
+overflow:hidden;
+}
 
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+/* Glassmorphism */
+.glass{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(14px);
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.15);
+box-shadow:0 0 25px rgba(0,0,0,.4);
+}
 
-        .glass-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-geo);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+/* Screens */
 
-        .glass-card h2 { font-size: 1.5rem; margin-bottom: 10px; }
-        .glass-card p { font-size: 0.9rem; opacity: 0.7; }
+.screen{
+position:absolute;
+width:100%;
+height:100%;
+display:none;
+padding:20px;
+overflow:auto;
+}
 
-        /* --- РОЗДІЛ ГЕОМЕТРІЇ (SCROLL SNAP) --- */
-        #geometry-section {
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scrollbar-width: none;
-        }
-        #geometry-section::-webkit-scrollbar { display: none; }
+.active{
+display:block;
+}
 
-        .slide {
-            height: 100vh;
-            width: 100%;
-            scroll-snap-align: start;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-        }
+/* ===== MENU ===== */
 
-        .content-box {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            padding: clamp(20px, 5vw, 50px);
-            border-radius: 32px;
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
+.menu{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100%;
+gap:30px;
+text-align:center;
+}
 
-        .img-placeholder {
-            width: 100%;
-            height: 200px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 15px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed var(--glass-border);
-        }
+.menu h1{
+font-size:2.5rem;
+margin-bottom:20px;
+}
 
-        .img-placeholder img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 10px;
-        }
+.big-btn{
+width:280px;
+padding:20px;
+font-size:1.3rem;
+cursor:pointer;
+transition:.3s;
+}
 
-        /* --- КНОПКИ НАВІГАЦІЇ --- */
-        .back-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            padding: 10px 20px;
-            background: var(--accent-geo);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+.big-btn:hover{
+transform:scale(1.05);
+background:rgba(255,255,255,0.15);
+}
 
-        .back-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+/* Back button */
 
-        .hidden { display: none !important; }
+.back{
+margin-bottom:15px;
+cursor:pointer;
+padding:10px 18px;
+display:inline-block;
+}
 
-        /* Стилі для списків та формул */
-        .props-list { text-align: left; margin: 20px 0; list-style: none; }
-        .props-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
-        .props-list li::before { content: '◈'; position: absolute; left: 0; color: var(--accent-geo); }
+/* ===== THEORY SLIDER ===== */
 
-        @media (max-width: 600px) {
-            .content-box { padding: 25px 15px; }
-            h1 { font-size: 1.5rem; }
-        }
-    </style>
+.slider{
+height:90vh;
+overflow-y:scroll;
+scroll-snap-type:y mandatory;
+}
+
+.slide{
+scroll-snap-align:start;
+min-height:90vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:40px;
+font-size:1.2rem;
+line-height:1.7;
+text-align:left;
+}
+
+/* ===== TASKS ===== */
+
+.tasks{
+display:grid;
+gap:20px;
+max-width:900px;
+margin:auto;
+}
+
+.task{
+padding:20px;
+}
+
+.task img{
+width:100%;
+margin-top:10px;
+border-radius:10px;
+opacity:.6;
+}
+
+/* ===== TEST ===== */
+
+.question{
+margin-bottom:25px;
+padding:15px;
+}
+
+.result{
+font-size:1.6rem;
+text-align:center;
+margin-top:20px;
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:700px){
+
+.menu h1{
+font-size:1.8rem;
+}
+
+.big-btn{
+width:90%;
+}
+
+.slide{
+font-size:1rem;
+padding:25px;
+}
+
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="main-menu">
-        <h1 class="logo">ГЕОМЕТРІЯ ТА ШКІРА<br><small style="font-size: 0.4em; opacity: 0.6;">Освітній Мультитул</small></h1>
-        <div class="menu-grid">
-            <div class="glass-card" onclick="openSection('geometry-section')">
-                <h2>📐 Площа фігур</h2>
-                <p>Визначення, властивості та формули</p>
-            </div>
-            <div class="glass-card" style="border-color: var(--accent-skin);" onclick="alert('Розділ Шкіра в розробці...')">
-                <h2>🧬 Захворювання шкіри</h2>
-                <p>Анатомія та дерматологія</p>
-            </div>
-            <div class="glass-card" onclick="alert('Тест скоро з\'явиться!')">
-                <h2>📝 Тест / Вікторина</h2>
-                <p>Перевір свої знання</p>
-            </div>
-        </div>
-    </div>
+<!-- ================= MENU ================= -->
 
-    <div id="geometry-section" class="hidden">
-        <button class="back-btn" onclick="showMenu()">← Назад у меню</button>
+<section id="menu" class="screen active">
+<div class="menu">
+<h1>Геометрія: Площа фігур</h1>
 
-        <section class="slide">
-            <div class="content-box">
-                <h1>Що таке площа?</h1>
-                <div class="img-placeholder">
-                    <img src="https://via.placeholder.com/400x200/1e293b/38bdf8?text=Concept+of+Area" alt="Ілюстрація площі">
-                </div>
-                <p>Площа — це величина, яка показує, скільки місця займає фігура на площині. Уявіть, що ви купуєте килим для кімнати або фарбуєте стіну — саме площа визначає, скільки матеріалу вам знадобиться.</p>
-            </div>
-        </section>
+<div class="glass big-btn" onclick="openScreen('theory')">
+1. Теорія
+</div>
 
-        <section class="slide">
-            <div class="content-box">
-                <h1>4 Властивості площі</h1>
-                <ul class="props-list">
-                    <li><b>Додатність:</b> Площа завжди більша за нуль ($S > 0$).</li>
-                    <li><b>Рівність:</b> Рівні фігури мають однакові площі.</li>
-                    <li><b>Додавання:</b> Як у пазлах: площа цілої фігури дорівнює сумі площ її частин.</li>
-                    <li><b>Одиниця:</b> За еталон беремо одиничний квадрат (1х1).</li>
-                </ul>
-                <div class="img-placeholder">
-                    <img src="https://via.placeholder.com/400x200/1e293b/38bdf8?text=Properties" alt="Властивості площі">
-                </div>
-            </div>
-        </section>
+<div class="glass big-btn" onclick="openScreen('tasks')">
+2. Завдання
+</div>
 
-        <section class="slide">
-            <div class="content-box">
-                <h1>Як вимірювати?</h1>
-                <p>Одиниці: мм², см², дм², м², км².</p>
-                <p>Земельні міри: <b>Ар</b> (100 м²) та <b>Гектар</b> (10 000 м²).</p>
-                <div class="img-placeholder">
-                    <img src="https://via.placeholder.com/400x200/1e293b/38bdf8?text=Grid+Method" alt="Метод палетки">
-                </div>
-                <p><b>Метод Палетки:</b> для фігур кривої форми (як пляма на шкірі) використовують прозору сітку, рахуючи повні та неповні квадрати.</p>
-            </div>
-        </section>
+<div class="glass big-btn" onclick="openScreen('tests')">
+3. Тести
+</div>
 
-        <section class="slide">
-            <div class="content-box">
-                <h1>Головні формули</h1>
-                <div class="formula-box" style="font-size: 2rem; margin: 20px 0;">
-                    <p>Прямокутник: $$S = a \cdot b$$</p>
-                    <p>Квадрат: $$S = a^2$$</p>
-                </div>
-                <div class="img-placeholder">
-                    <img src="https://via.placeholder.com/400x200/1e293b/38bdf8?text=Formulas" alt="Квадрат та прямокутник">
-                </div>
-            </div>
-        </section>
+</div>
+</section>
 
-        <section class="slide">
-            <div class="content-box">
-                <h1>Цікаві терміни</h1>
-                <p><b>Рівновеликі фігури</b> — це фігури, що мають однакову площу, але різну форму.</p>
-                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-top: 20px;">
-                    <p>Приклад: Квадрат $4 \times 4$ ($S=16$) та прямокутник $2 \times 8$ ($S=16$).</p>
-                </div>
-                <div class="img-placeholder">
-                    <img src="https://via.placeholder.com/400x200/1e293b/38bdf8?text=Equal+Area" alt="Рівновеликі фігури">
-                </div>
-            </div>
-        </section>
-    </div>
 
-    <script>
-        function openSection(id) {
-            document.getElementById('main-menu').classList.add('hidden');
-            const section = document.getElementById(id);
-            section.classList.remove('hidden');
-            section.scrollTop = 0; // Скидання скролу до початку
-        }
+<!-- ================= THEORY ================= -->
 
-        function showMenu() {
-            document.getElementById('geometry-section').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-        }
+<section id="theory" class="screen">
 
-        // Обробка MathJax при динамічній зміні видимості
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
-        };
-    </script>
+<div class="glass back" onclick="openScreen('menu')">
+⬅ Назад до меню
+</div>
+
+<div class="slider glass">
+
+<div class="slide">
+<p>
+Що таке площа?<br>
+Площа — це величина, яка показує, скільки місця займає фігура на площині.<br>
+Уявіть, що ви хочете застелити підлогу в кімнаті килимом або пофарбувати стіну. Те, скільки матеріалу вам знадобиться — це і є площа.
+</p>
+</div>
+
+<div class="slide">
+<p>
+4 основні властивості площі:<br>
+Додатність: Площа не може бути від’ємною (не буває кімнати площею -5 м²).<br>
+Рівність: Якщо фігури однакові (рівні), то і їхні площі рівні.<br>
+Додавання: Якщо фігуру розділити на частини, то площа всієї фігури дорівнює сумі площ її частин (як пазл).<br>
+Одиниця вимірювання: За основу ми беремо одиничний квадрат — це квадрат зі стороною 1 (1 см, 1 м тощо).
+</p>
+</div>
+
+<div class="slide">
+<p>
+📏 Як вимірювати площу?<br>
+1. Одиниці вимірювання: мм², см², дм², м², км², Ар (сотка), Гектар (га).<br>
+2. Метод "Палетки": поясни використання прозорої плівки в клітинку.
+</p>
+</div>
+
+<div class="slide">
+<p>
+📐 Головні формули (Must Know!):<br><br>
+
+Прямокутник:<br>
+$$S = a \cdot b$$
+
+Квадрат:<br>
+$$S = a^2$$
+</p>
+</div>
+
+<div class="slide">
+<p>
+💡 Цікаві терміни: Рівновеликі фігури (квадрат 4х4 та прямокутник 2х8).
+</p>
+</div>
+
+</div>
+</section>
+
+
+<!-- ================= TASKS ================= -->
+
+<section id="tasks" class="screen">
+
+<div class="glass back" onclick="openScreen('menu')">
+⬅ Назад до меню
+</div>
+
+<div class="tasks">
+
+<div class="glass task">
+<b>Задача 1.</b><br>
+Прямокутник має сторони 6 см і 9 см. Знайдіть площу.
+<img src="" alt="Місце для скріншоту">
+</div>
+
+<div class="glass task">
+<b>Задача 2.</b><br>
+Квадрат має сторону 12 м. Обчисліть площу.
+<img src="" alt="Місце для скріншоту">
+</div>
+
+<div class="glass task">
+<b>Задача 3.</b><br>
+Переведіть 3 гектари у квадратні метри.
+<img src="" alt="Місце для скріншоту">
+</div>
+
+<div class="glass task">
+<b>Задача 4.</b><br>
+Площа прямокутника 48 см², одна сторона 6 см. Знайдіть іншу сторону.
+<img src="" alt="Місце для скріншоту">
+</div>
+
+</div>
+</section>
+
+
+<!-- ================= TESTS ================= -->
+
+<section id="tests" class="screen">
+
+<div class="glass back" onclick="openScreen('menu')">
+⬅ Назад до меню
+</div>
+
+<form id="quiz"></form>
+
+<div style="text-align:center">
+<button class="glass big-btn" onclick="checkTest()">Перевірити</button>
+</div>
+
+<div id="result" class="result"></div>
+
+</section>
+
+
+<script>
+
+/* ===== SPA Navigation ===== */
+
+function openScreen(id){
+document.querySelectorAll('.screen')
+.forEach(s=>s.classList.remove('active'));
+
+document.getElementById(id).classList.add('active');
+}
+
+/* ===== TEST QUESTIONS ===== */
+
+const questions=[
+["Що показує площа?","Скільки місця займає фігура"],
+["Площа може бути від’ємною?","Ні"],
+["Одиниця площі?","Квадрат"],
+["Формула прямокутника?","a*b"],
+["Формула квадрата?","a^2"],
+["1 гектар =","10000 м²"],
+["Рівні фігури мають","Рівні площі"],
+["Площа складається з","Суми частин"],
+["Метод вимірювання з плівкою?","Палетка"],
+["мм² — це","Одиниця площі"],
+["Площа — це","Величина"],
+["4x4 і 2x8 —","Рівновеликі"]
+];
+
+const quiz=document.getElementById("quiz");
+
+questions.forEach((q,i)=>{
+quiz.innerHTML+=`
+<div class="glass question">
+<p>${i+1}. ${q[0]}</p>
+<input name="q${i}" placeholder="Ваша відповідь">
+</div>`;
+});
+
+/* ===== CHECK TEST ===== */
+
+function checkTest(){
+
+event.preventDefault();
+
+let score=0;
+
+questions.forEach((q,i)=>{
+const ans=document.querySelector(`[name=q${i}]`).value
+.toLowerCase().trim();
+
+if(ans.includes(q[1].toLowerCase()))
+score++;
+});
+
+document.getElementById("result")
+.innerHTML=`Ваш результат: ${score} / ${questions.length}`;
+
+}
+
+</script>
+
 </body>
 </html>
